@@ -51,21 +51,3 @@ function FetchButton() {
     </button>
   );
 }
-
-// Button component :
-function FetchButton() {
-  return (
-    <button>
-      Fetch data
-    </button>
-  );
-}
-
-function FetchDataButton() {
-  return (
-    <button>
-    I'm a button
-  </button>
-  );
-}
-
