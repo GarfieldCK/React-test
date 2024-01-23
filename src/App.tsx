@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import dataManipulation from "./UserData"
 import './App.css';
 
 interface userMetaData {
@@ -7,47 +8,46 @@ interface userMetaData {
   username: string
 }
 
+interface userListProps {
+  userData: userMetaData[]
+};
+
+
 function App() {
 
-  // Fetch data:
-  const Fetch = () => {
-    const [userMetaData, setUserMetaData] = useState<userMetaData[]>([]);
-    useEffect(() => {
-      fetch("https://random-data-api.com/api/users/random_user?size=5")
-      .then((res) => {
-        return res.json();
-      })
-      .then((metaData) => {
-        console.log(metaData);
-        setUserMetaData(metaData);
-      });
-    }, []);
-    return <div>
-      <ul>
-        {userMetaData.map((user, index) => (
-          <li key={index}>
-            {user.first_name}
-            {user.last_name}
-            {user.username}
-          </li>
-        ))}
-      </ul>
-    </div>
-  }
+  // Hook :
+  // const [userData, setUserData] = useState<userMetaData[]>([]);
+  const [buttonClick, setButtonClick] = useState(false);
+
+  const handleButtonClick = () => {
+    setButtonClick(!buttonClick);
+  };
+
+  const userData = dataManipulation.setupData();
+  // const addupData = dataManipulation.addupData(userData)
+ 
   return (
     <div>
-    <h1> Hello world</h1>
-    <FetchButton/>
-    <Fetch/>
+    <h1>User data list </h1>
+    {/* < UserList userData={userData} /> */}
+    {/* <button onClick={handleButtonClick}> Fetch data </button>
+    {buttonClick && <addupData/>} */}
   </div>
   );
 }
 
-// Button component :
-function FetchButton() {
+function UserList(userData: userMetaData[]) {
   return (
-    <button>
-      Fetch data
-    </button>
+    <ul>
+      {userData.map((user, index) => (
+        <li key={index}>
+          {/* Customize display data */}
+          {user.username} {user.first_name} {user.last_name}
+        </li>
+      ))}
+    </ul>
   );
 }
+
+
+export default App;
