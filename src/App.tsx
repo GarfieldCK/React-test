@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-// import UserDataFetcher from "./UserDataFetcher"
 import './App.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 import Button from "react-bootstrap/Button";
@@ -21,11 +20,9 @@ interface SearchProps {
   handleSearch: (searchValue: string, searchBy: string) => void;
 }
 
-
 function App() {
     const [usersData, setUsersData] = useState<userListProps>({ usersInformation : []});
     const [filteredUsers, setFilterUsers] = useState<userMetaData[]>([]);
-    // const [searchTerm, setSearchTerm] = useState<string>('');
   
     // Data manipulation
     const getUserData = async () => {
@@ -59,13 +56,14 @@ function App() {
       }
     }
   
+    // Aply useEffect to make it run only once
     useEffect(() => {
       // Use the async function inside the effect
       const fetchData = async() => {
         try {
           await getUserData();
         } catch (error) {
-          // Handle the error
+          console.error('Error can not fetch data', error)
       }
       };
   
@@ -74,7 +72,6 @@ function App() {
   
     // Searching manipulation
     const handleSearch = (searchValue: string, searchBy: string) => {
-      // setSearchTerm(searchValue.toLowerCase());
 
       const filtered = usersData.usersInformation.filter((user) => {
         switch(searchBy) {
@@ -94,8 +91,6 @@ function App() {
       })
       setFilterUsers(filtered);
     }
-    // console.log(usersData);
-    // console.log(filteredUsers);
  
   return (
     <div>
@@ -103,22 +98,21 @@ function App() {
     <Search handleSearch={handleSearch}/>
     <UserList userData={filteredUsers}/>
     <Button
-      variant="primary"  // You can change the variant based on Bootstrap styles
+      variant="primary"
       style={{
         backgroundColor: '#4CAF50',
         color: 'white',
         fontWeight: 'bold',
         borderRadius: '8px',
-        border: '2px solid #4CAF50', // Green border
+        border: '2px solid #4CAF50',
         display: 'block',
-        margin: 'auto', // Center the button horizontally
-        marginTop: '20px', // Optional: Add margin from the top
+        margin: 'auto',
+        marginTop: '20px',
       }}
       onClick={handleFetchMore}
     >
-      Fetch more cat
+      Fetch more Cat 🐱
     </Button>
-    {/* <UserList userData={filteredUsers}/> */}
   </div>
   );
 }
@@ -139,7 +133,9 @@ function UserList({ userData }: { userData: userMetaData[] }) {
                 />
               </div>
               <div style={{padding: '10px'}}>
-                <Card.Title>{user.username}</Card.Title>
+                <Card.Title style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                    {user.username}
+                  </Card.Title>
                 <Card.Text>
                   <span className="font-weight-bold">{user.first_name} {user.last_name}</span>
                 </Card.Text>
