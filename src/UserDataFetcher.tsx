@@ -26,21 +26,9 @@ const UserDataFetcher: React.FC = () => {
     } catch (error) {
       console.error('Error fetching data', error);
       throw error;
+    } finally {
     }
   };
-  useEffect(() => {
-    // Use the async function inside the effect
-    const fetchData = async () => {
-      try {
-        await getUserData();
-      } catch (error) {
-        // Handle the error
-      }
-    };
-
-    fetchData();
-  }, []); 
-
   // Handle when click fetch more
   const handleFetchMore = async () => {
     try {
@@ -49,6 +37,20 @@ const UserDataFetcher: React.FC = () => {
       console.error('Error fetching data')
     }
   }
+
+  useEffect(() => {
+    // Use the async function inside the effect
+    const fetchData = async () => {
+      try {
+        await getUserData();
+      } catch (error) {
+        // Handle the error
+    }
+    };
+
+    fetchData();
+
+  }, []); 
 
   console.log(usersData);
 
@@ -71,6 +73,7 @@ function UserList({ userData }: { userData: userMetaData[] }) {
     </ul>
   );
 }
+
 
 // function SetupUserData() {
 //     const [userData, setUserData] = useState<userListProps>({userData: []});
