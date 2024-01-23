@@ -13,24 +13,21 @@ interface userListProps {
 };
 
 interface SearchProps {
-  handleSearch: (searchValue: string) => void;
+  handleSearch: (searchValue: string, searchBy: string) => void;
 }
 
 
 function App() {
     const [usersData, setUsersData] = useState<userListProps>({ usersInformation : []});
     const [filteredUsers, setFilterUsers] = useState<userMetaData[]>([]);
-    const [searchTerm, setSearchTerm] = useState<string>('');
+    // const [searchTerm, setSearchTerm] = useState<string>('');
   
     // Data manipulation
     const getUserData = async () => {
       try {
         const response = await fetch("https://random-data-api.com/api/users/random_user?size=5");
         const data = await response.json();
-        // Update userData state
-        // setUsersData((prevData) => ({ usersInformation: [...prevData.usersInformation, ...data]}));
         setUsersData({ usersInformation : data})
-        setFilterUsers(data);
       } catch (error) {
         console.error('Error fetching data', error);
         throw error;
@@ -42,7 +39,6 @@ function App() {
         const response = await fetch("https://random-data-api.com/api/users/random_user?size=5");
         const newData = await response.json();
         setUsersData((prevData) => ({ usersInformation: [...prevData.usersInformation, ...newData]}));
-        setFilterUsers(usersData.usersInformation);
       } catch (error) {
         console.error(error)
       }
@@ -69,22 +65,28 @@ function App() {
       fetchData();
     }, []); 
   
-    console.log(usersData);
-
     // Searching manipulation
-    const handleSearch = (searchValue: string) => {
-      setSearchTerm(searchValue.toLowerCase());
+    const handleSearch = (searchValue: string, searchBy: string) => {
+      // setSearchTerm(searchValue.toLowerCase());
 
-      const filtered = usersData.usersInformation.filter(
-        (user) => 
-          user.username.toLowerCase().includes(searchValue.toLowerCase()) ||
-          user.first_name.toLowerCase().includes(searchValue.toLowerCase()) ||
-          user.last_name.toLowerCase().includes(searchValue.toLowerCase())
-
-      );
+      const filtered = usersData.usersInformation.filter((user) => {
+        switch(searchBy) {
+          case 'username':
+            return user.username.toLowerCase().includes(searchValue.toLowerCase());
+          case 'firstname':
+            return user.first_name.toLowerCase().includes(searchValue.toLowerCase());
+          case 'lastname':
+            return user.last_name.toLowerCase().includes(searchValue.toLowerCase());
+          default:
+            return (
+              user.username.toLowerCase().includes(searchValue.toLowerCase()) ||
+              user.first_name.toLowerCase().includes(searchValue.toLowerCase()) ||
+              user.last_name.toLowerCase().includes(searchValue.toLowerCase())
+            ); 
+        }
+      })
       setFilterUsers(filtered);
     }
-
  
   return (
     <div>
@@ -93,8 +95,6 @@ function App() {
     <UserList userData={usersData.usersInformation}/>
     <button onClick={handleFetchMore}> Fetch more</button>
     <UserList userData={filteredUsers}/>
-    {/* <button onClick={handleButtonClick}> Fetch data </button>
-    {buttonClick && <addupData/>} */}
   </div>
   );
 }
@@ -102,31 +102,33 @@ function App() {
 // Data map manipulation
 function UserList({ userData }: { userData: userMetaData[] }) {
   return (
-    <ul>
+    <ul style={{ listStyle: 'none', padding: 0 }}>
       {userData.map((user, index) => (
-        <li key={index}>
-          {/* Customize display data */}
-          {user.username} {user.first_name} {user.last_name}
+        <li key={index} style={{ marginBottom: '8px', padding: '10px', border: '1px solid #ddd' }}>
+          <strong>{user.username}</strong> - {user.first_name} {user.last_name}
         </li>
       ))}
     </ul>
   );
 }
-// Search term manipulation
-// function Search(handleSearch) {
-//   return (
-//     <div>
-//     <label htmlFor="search">Search:</label>
-//     <input type="text" id="search" onChange={(e) => handleSearch(e.target.value)} />
-//   </div>
-//   );
-// }
 
 function Search({ handleSearch } : SearchProps) {
+
+  const [selectedBy, setSelectedBy] = useState<string>('username');
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedBy(e.target.value);
+  };
+
   return (
     <div>
     <label htmlFor="search">Search:</label>
-    <input type="text" id="search" onChange={(e) => handleSearch(e.target.value)} />
+    <input type="text" id="search" onChange={(e) => handleSearch(e.target.value, selectedBy)} />
+    <select value={selectedBy} onChange={handleSelectChange}>
+        <option value="username">Username</option>
+        <option value="firstname">First Name</option>
+        <option value="lastname">Last Name</option>
+      </select>
+
   </div>
   );
 }
