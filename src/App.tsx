@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import dataManipulation from "./UserData"
+import UserDataFetcher from "./UserDataFetcher"
 import './App.css';
 
 interface userMetaData {
@@ -9,7 +9,7 @@ interface userMetaData {
 }
 
 interface userListProps {
-  userData: userMetaData[]
+  usersData: userMetaData[]
 };
 
 
@@ -17,24 +17,28 @@ function App() {
 
   // Hook :
   // const [userData, setUserData] = useState<userMetaData[]>([]);
-  const [buttonClick, setButtonClick] = useState(false);
+  // const [usersData, setUserData] = useState<userListProps>({usersData: []});
 
-  const handleButtonClick = () => {
-    setButtonClick(!buttonClick);
-  };
+  // const [buttonClick, setButtonClick] = useState(false);
 
-  const userData = dataManipulation.setupData();
+  // const handleButtonClick = () => {
+  //   setButtonClick(!buttonClick);
+  // };
+
+  // const userData = dataManipulation.setupData();
   // const addupData = dataManipulation.addupData(userData)
  
   return (
     <div>
     <h1>User data list </h1>
-    {/* < UserList userData={userData} /> */}
+    <UserDataFetcher />
     {/* <button onClick={handleButtonClick}> Fetch data </button>
     {buttonClick && <addupData/>} */}
   </div>
   );
 }
+
+
 
 function UserList(userData: userMetaData[]) {
   return (
