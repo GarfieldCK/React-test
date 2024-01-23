@@ -60,8 +60,6 @@ const UserDataFetcher: React.FC = () => {
     fetchData();
   }, []); 
 
-  console.log(usersData);
-
   return (<div>
     <h1> User data will go here </h1>
     <UserList userData={usersData.usersData}/>
