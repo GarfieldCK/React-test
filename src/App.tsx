@@ -99,7 +99,7 @@ function App() {
   );
 }
 
-// Data map manipulation
+// Data map manipulation, mapping
 function UserList({ userData }: { userData: userMetaData[] }) {
   return (
     <ul style={{ listStyle: 'none', padding: 0 }}>
@@ -112,6 +112,7 @@ function UserList({ userData }: { userData: userMetaData[] }) {
   );
 }
 
+// Searching manipulation
 function Search({ handleSearch } : SearchProps) {
 
   const [selectedBy, setSelectedBy] = useState<string>('username');
