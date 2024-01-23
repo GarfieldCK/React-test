@@ -20,19 +20,28 @@ const UserDataFetcher: React.FC = () => {
     try {
       const response = await fetch("https://random-data-api.com/api/users/random_user?size=5");
       const data = await response.json();
-
       // Update userData state
-      setUsersData((prevData) => ({ usersData: [...prevData.usersData, ...data]}));
+      // setUsersData((prevData) => ({ usersData: [...prevData.usersData, ...data]}));
+      setUsersData({ usersData : data})
     } catch (error) {
       console.error('Error fetching data', error);
       throw error;
-    } finally {
     }
   };
+
+  const updateUserData = async () => {
+    try{
+      const response = await fetch("https://random-data-api.com/api/users/random_user?size=5");
+      const newData = await response.json();
+      setUsersData((prevData) => ({ usersData: [...prevData.usersData, ...newData]}));
+    } catch (error) {
+      console.error(error)
+    }
+  }
   // Handle when click fetch more
   const handleFetchMore = async () => {
     try {
-      getUserData();
+      updateUserData();
     } catch(error){
       console.error('Error fetching data')
     }
@@ -40,7 +49,7 @@ const UserDataFetcher: React.FC = () => {
 
   useEffect(() => {
     // Use the async function inside the effect
-    const fetchData = async () => {
+    const fetchData = async() => {
       try {
         await getUserData();
       } catch (error) {
@@ -49,18 +58,18 @@ const UserDataFetcher: React.FC = () => {
     };
 
     fetchData();
-
   }, []); 
 
   console.log(usersData);
 
   return (<div>
     <h1> User data will go here </h1>
-    <button onClick={handleFetchMore}>Fetch more</button>
     <UserList userData={usersData.usersData}/>
+    <button onClick={handleFetchMore}>Fetch more</button>
   </div>);
 }
 
+// Component to convert data to DOM
 function UserList({ userData }: { userData: userMetaData[] }) {
   return (
     <ul>
@@ -73,71 +82,5 @@ function UserList({ userData }: { userData: userMetaData[] }) {
     </ul>
   );
 }
-
-
-// function SetupUserData() {
-//     const [userData, setUserData] = useState<userListProps>({userData: []});
-
-//     const getUserData = async () => {
-//         try {
-//           const response = await fetch("https://random-data-api.com/api/users/random_user?size=5");
-//           const data = await response.json();
-    
-//           // Update userData state
-//           setUserData(data);
-//         } catch (error) {
-//           console.error('Error fetching data', error);
-//           throw error;
-//         }
-//       };
-    
-//     // Make it applt only once
-//     useEffect(() => {
-//         // Use the async function inside the effect
-//         const fetchData = async () => {
-//         try {
-//             await getUserData();
-//         } catch (error) {
-//             // Handle the error
-//         }
-//         };
-
-//         fetchData();
-//     }, []);
-//     return userData
-// }
-
-// function AddupUserData({ userData }: userListProps) {
-//     const [newUserData, setNewUserData] = useState(userData);
-
-//     const getNewUserData = async () => {
-//         try {
-//           const response = await fetch("https://random-data-api.com/api/users/random_user?size=5");
-//           const responseData = await response.json();
-    
-//           // Update userData state
-//           setNewUserData((prevData) => [...prevData, ...responseData]);
-//         } catch (error) {
-//           console.error('Error fetching data', error);
-//           throw error;
-//         }
-//       };
-
-//     useEffect(() => {
-//     // Use the async function inside the effect
-//     const fetchData = async () => {
-//     try {
-//         await getNewUserData();
-//     } catch (error) {
-//         // Handle the error
-//     }
-//     };
-
-//     fetchData();
-//     }, []);
-
-//     return newUserData;
-// }
-
 
 export default UserDataFetcher;
