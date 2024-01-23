@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 // import UserDataFetcher from "./UserDataFetcher"
 import './App.css';
+import "bootstrap/dist/css/bootstrap.min.css";
+import Button from "react-bootstrap/Button";
+import Card from "react-bootstrap/Card"
+import Row from "react-bootstrap/Row"
+import Col from "react-bootstrap/Col";
 
 interface userMetaData {
   first_name: string,
@@ -28,6 +33,7 @@ function App() {
         const response = await fetch("https://random-data-api.com/api/users/random_user?size=5");
         const data = await response.json();
         setUsersData({ usersInformation : data})
+        setFilterUsers(data)
       } catch (error) {
         console.error('Error fetching data', error);
         throw error;
@@ -39,6 +45,7 @@ function App() {
         const response = await fetch("https://random-data-api.com/api/users/random_user?size=5");
         const newData = await response.json();
         setUsersData((prevData) => ({ usersInformation: [...prevData.usersInformation, ...newData]}));
+        setFilterUsers((prevData) => ([...prevData, ...newData]))
       } catch (error) {
         console.error(error)
       }
@@ -87,14 +94,31 @@ function App() {
       })
       setFilterUsers(filtered);
     }
+    // console.log(usersData);
+    // console.log(filteredUsers);
  
   return (
     <div>
-    <h1>User data list </h1>
+    <h1>User Information</h1>
     <Search handleSearch={handleSearch}/>
-    <UserList userData={usersData.usersInformation}/>
-    <button onClick={handleFetchMore}> Fetch more</button>
     <UserList userData={filteredUsers}/>
+    <Button
+      variant="primary"  // You can change the variant based on Bootstrap styles
+      style={{
+        backgroundColor: '#4CAF50',
+        color: 'white',
+        fontWeight: 'bold',
+        borderRadius: '8px',
+        border: '2px solid #4CAF50', // Green border
+        display: 'block',
+        margin: 'auto', // Center the button horizontally
+        marginTop: '20px', // Optional: Add margin from the top
+      }}
+      onClick={handleFetchMore}
+    >
+      Fetch more cat
+    </Button>
+    {/* <UserList userData={filteredUsers}/> */}
   </div>
   );
 }
@@ -102,13 +126,29 @@ function App() {
 // Data map manipulation, mapping
 function UserList({ userData }: { userData: userMetaData[] }) {
   return (
-    <ul style={{ listStyle: 'none', padding: 0 }}>
+    <Row className="card-container">
       {userData.map((user, index) => (
-        <li key={index} style={{ marginBottom: '8px', padding: '10px', border: '1px solid #ddd' }}>
-          <strong>{user.username}</strong> - {user.first_name} {user.last_name}
-        </li>
+        <Col key={index} lg={6} style={{ marginBottom: '8px' }}>
+          <Card>
+            <Card.Body className="d-flex align-items-center">
+              <div className="avatar-box mr-3">
+                <img
+                  src={`https://placekitten.com/50/50?image=${index + 1}`}
+                  alt={`Avatar ${index + 1}`}
+                  style={{ width: '75px', height: '75px', borderRadius: '50%' }}
+                />
+              </div>
+              <div style={{padding: '10px'}}>
+                <Card.Title>{user.username}</Card.Title>
+                <Card.Text>
+                  <span className="font-weight-bold">{user.first_name} {user.last_name}</span>
+                </Card.Text>
+              </div>
+            </Card.Body>
+          </Card>
+        </Col>
       ))}
-    </ul>
+    </Row>
   );
 }
 
@@ -121,16 +161,24 @@ function Search({ handleSearch } : SearchProps) {
   };
 
   return (
-    <div>
-    <label htmlFor="search">Search:</label>
-    <input type="text" id="search" onChange={(e) => handleSearch(e.target.value, selectedBy)} />
-    <select value={selectedBy} onChange={handleSelectChange}>
+    <div style={{ marginBottom: '20px', padding: '10px', border: '1px solid #ddd' }}>
+      <label htmlFor="search" style={{ marginRight: '10px' }}>Search:</label>
+      <input
+        type="text"
+        id="search"
+        onChange={(e) => handleSearch(e.target.value, selectedBy)}
+        style={{ marginRight: '10px', padding: '5px' }}
+      />
+      <select
+        value={selectedBy}
+        onChange={handleSelectChange}
+        style={{ padding: '5px' }}
+      >
         <option value="username">Username</option>
         <option value="firstname">First Name</option>
         <option value="lastname">Last Name</option>
       </select>
-
-  </div>
+    </div>
   );
 }
 export default App;
